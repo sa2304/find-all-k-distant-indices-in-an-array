@@ -1,6 +1,6 @@
+#include <algorithm>
 #include <cassert>
 #include <iostream>
-#include <set>
 #include <vector>
 
 using namespace std;
@@ -8,17 +8,24 @@ using namespace std;
 class Solution {
  public:
   vector<int> findKDistantIndices(vector<int> &nums, int key, int k) {
-    set<int> indices;
-    const int N = nums.size();
-    for (int j = 0; j < N; ++j) {
-      if (nums[j] == key) {
-        for (int i = j - k; i < N && (i <= (j + k)); ++i) {
-          if (0 <= i) { indices.insert(i); }
-        }
+    vector<int> key_indices;
+    for (int i = 0; i < nums.size(); ++i) {
+      if (nums[i] == key) {
+        key_indices.push_back(i);
       }
     }
 
-    return {indices.begin(), indices.end()};
+    vector<int> result;
+    for (int i = 0; i < nums.size(); ++i) {
+      auto iter = find_if(key_indices.begin(), key_indices.end(), [i, k](int ki) {
+        return abs(i - ki) <= k;
+      });
+      if (key_indices.end() != iter) {
+        result.push_back(i);
+      }
+    }
+
+    return result;
   }
 };
 
